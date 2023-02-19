@@ -51,8 +51,8 @@ public class BlockPlayerListener implements Listener {
                 Block block = event.getClickedBlock();
                 if (block == null) return;
                 // Check permission with external plugin
-                if (Dependency.isProtectedFrom(block, player)) return; // blockwise
-                if (Dependency.isProtectedFrom(block.getRelative(event.getBlockFace()), player)) return; // signwise
+                if (Dependency.isProtectedFrom(block.getRelative(event.getBlockFace()), block, event.getItem(), player, event.getHand())) return; // blockwise
+                //if (Dependency.isProtectedFrom(block.getRelative(event.getBlockFace()), player)) return; // signwise
                 // Check whether locking location is obstructed
                 Block signLoc = block.getRelative(blockface);
                 if (!signLoc.isEmpty()) return;
@@ -136,7 +136,7 @@ public class BlockPlayerListener implements Listener {
         if (LocketteProAPI.isLockString(topline) || LocketteProAPI.isAdditionalString(topline)){
             Block block = LocketteProAPI.getAttachedBlock(event.getBlock());
             if (LocketteProAPI.isLockable(block)){
-                if (Dependency.isProtectedFrom(block, player)){ // External check here
+                if (Dependency.isProtectedFrom(block, block, player.getItemInHand(), player, EquipmentSlot.HAND)){ // External check here
                     event.setLine(0, Config.getLang("sign-error"));
                     Utils.sendMessages(player, Config.getLang("cannot-lock-manual"));
                     return; 

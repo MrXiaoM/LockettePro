@@ -7,6 +7,8 @@ import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.scoreboard.Team;
@@ -46,7 +48,10 @@ public class Dependency {
         }
     }
     
-    public static boolean isProtectedFrom(Block block, Player player){
+    public static boolean isProtectedFrom(Block block, Block against, ItemStack item, Player player, EquipmentSlot hand){
+        LockSignPlaceEvent event = new LockSignPlaceEvent(block, block.getState(), against, item, player, true, hand);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return true;
         if (worldguard != null) {
             if (!worldguard.createProtectionQuery().testBlockPlace(player, block.getLocation(), block.getType())) {
                 return true;
