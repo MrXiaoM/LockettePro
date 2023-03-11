@@ -17,24 +17,24 @@ import java.util.List;
 
 public class DependencyProtocolLib {
 
-    public static void setUpProtocolLib(Plugin plugin){
+    public static void setUpProtocolLib(Plugin plugin) {
         if (Config.protocollib) {
             addTileEntityDataListener(plugin);
             addMapChunkListener(plugin);
         }
     }
-    
-    public static void cleanUpProtocolLib(Plugin plugin){
+
+    public static void cleanUpProtocolLib(Plugin plugin) {
         try {
-            if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")){
+            if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
                 ProtocolLibrary.getProtocolManager().removePacketListeners(plugin);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
-    public static void addTileEntityDataListener(Plugin plugin){
+
+    public static void addTileEntityDataListener(Plugin plugin) {
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(plugin, ListenerPriority.LOW, PacketType.Play.Server.TILE_ENTITY_DATA) {
             @Override
             public void onPacketSending(PacketEvent event) {
@@ -45,8 +45,8 @@ public class DependencyProtocolLib {
             }
         });
     }
-    
-    public static void addMapChunkListener(Plugin plugin){
+
+    public static void addMapChunkListener(Plugin plugin) {
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(plugin, ListenerPriority.LOW, PacketType.Play.Server.MAP_CHUNK) {
             @Override
             public void onPacketSending(PacketEvent event) {
@@ -80,5 +80,5 @@ public class DependencyProtocolLib {
             }
         }
     }
-    
+
 }
