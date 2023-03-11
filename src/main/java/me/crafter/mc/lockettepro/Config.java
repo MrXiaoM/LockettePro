@@ -216,8 +216,10 @@ public class Config {
     public static long getLockDefaultCreateTimeUnix() {return lockdefaultcreatetime;}
     public static String getLockExpireString() {return lockexpirestring;}
     
-    public static String getLang(String path){
-        return ChatColor.translateAlternateColorCodes('&', lang.getString(path, ""));
+    public static String getLang(String path) {
+        String str = lang.getString(path);
+        if (str == null) str = String.join("\n", lang.getStringList(path));
+        return ChatColor.translateAlternateColorCodes('&', str);
     }
     
     public static boolean isUuidEnabled(){
