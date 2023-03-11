@@ -60,12 +60,13 @@ public class Dependency {
     }
 
     public static boolean isProtectedFrom(Block block, Player player) {
+        if (player.hasPermission("lockettepro.bypass.dependency")) return false;
         if (plot) {
             Location loc = BukkitUtil.getLocation(block.getLocation());
             PlotArea area = PlotSquared.get().getApplicablePlotArea(loc);
             if (area != null) {
                 Plot plot = area.getPlot(loc);
-                if (plot != null && plot.isAdded(player.getUniqueId())) {
+                if (plot != null && !plot.isOwner(player.getUniqueId()) && !plot.isAdded(player.getUniqueId())) {
                     return true;
                 }
             }
