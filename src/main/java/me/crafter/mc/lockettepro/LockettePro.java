@@ -1,5 +1,6 @@
 package me.crafter.mc.lockettepro;
 
+import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -7,6 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permissible;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -86,29 +88,35 @@ public class LockettePro extends JavaPlugin {
     public static boolean needCheckHand(){
         return needcheckhand;
     }
-    
+
+    List<String> commandsEdit = Lists.newArrayList("1", "2", "3", "4");
+    List<String> commandsDebug = Lists.newArrayList("debug", "force", "update", "uuid");
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> commands = new ArrayList<>();
-        commands.add("reload");
-        commands.add("version");
-        commands.add("1");
-        commands.add("2");
-        commands.add("3");
-        commands.add("4");
-        commands.add("uuid");
-        commands.add("update");
-        commands.add("debug");
+        List<String> list = new ArrayList<>();
         if (args != null && args.length == 1) {
-            List<String> list = new ArrayList<>();
-            for (String s : commands) {
-                if (s.startsWith(args[0])) {
-                    list.add(s);
-                }
-            }
-            return list;
+            tab(sender, list, args[0], commandsEdit, "lockettepro.edit");
+            tab(sender, list, args[0], commandsDebug, "lockettepro.debug");
+            tab(sender, list, args[0], "version");
+            tab(sender, list, args[0], "reload");
         }
-        return null;
+        return list;
+    }
+
+    private void tab(Permissible p, List<String> list, String s, List<String> s1, String perm) {
+        if (perm == null || p.hasPermission(perm)) {
+            for (String s2 : s1) {
+                tab(p, list, s, s2, null);
+            }
+        }
+    }
+    private void tab(Permissible p, List<String> list, String s, String s1, String perm) {
+        if (perm == null || p.hasPermission(perm)) {
+            if (s1.startsWith(s)) list.add(s1);
+        }
+    }
+    private void tab(Permissible p, List<String> list, String s, String s1) {
+        tab(p, list, s, s1, "lockettepro." + s1);
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, final String[] args){
