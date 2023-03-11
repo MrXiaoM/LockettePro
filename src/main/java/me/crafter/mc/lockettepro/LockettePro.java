@@ -246,9 +246,9 @@ public class LockettePro extends JavaPlugin {
                                             }
                                             break;
                                         case "remove":
-                                            block.breakNaturally();
                                             Utils.sendMessages(player, Config.getLang("break-own-lock-sign"));
                                             Utils.resetCache(LocketteProAPI.getAttachedBlock(block));
+                                            block.breakNaturally();
                                             break;
                                     }
                                 } else if (LocketteProAPI.isAdditionalSign(block)) {
