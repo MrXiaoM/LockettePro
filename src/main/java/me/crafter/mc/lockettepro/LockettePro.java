@@ -89,18 +89,20 @@ public class LockettePro extends JavaPlugin {
         return needcheckhand;
     }
 
-    List<String> commandsEdit = Lists.newArrayList("1", "2", "3", "4", "remove");
+    List<String> commandsEdit = Lists.newArrayList("1", "2", "3", "4");
     List<String> commandsDebug = Lists.newArrayList("debug", "force", "update", "uuid");
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> list = new ArrayList<>();
-        if (args != null && args.length == 1) {
+        if (args.length == 1) {
             tab(sender, list, args[0], commandsEdit, "lockettepro.edit");
             tab(sender, list, args[0], commandsDebug, "lockettepro.debug");
+            tab(sender, list, args[0], "remove", "lockettepro.edit");
             tab(sender, list, args[0], "version");
             tab(sender, list, args[0], "reload");
         }
+        if (args.length == 2 && commandsEdit.contains(args[0])) return null;
         return list;
     }
 
