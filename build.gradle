@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'top.mrxiaom'
-version = '2.10.11'
+version = '2.10.12'
 
 repositories {
     maven { url = 'https://repo.huaweicloud.com/repository/maven/' }
