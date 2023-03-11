@@ -242,8 +242,7 @@ public class Config {
     }
 
     public static String getLang(String path) {
-        String str = lang.getString(path);
-        if (str == null) str = String.join("\n", lang.getStringList(path));
+        String str = lang.isList(path) ? String.join("\n", lang.getStringList(path)) : lang.getString(path, "");
         return ChatColor.translateAlternateColorCodes('&', str);
     }
 
