@@ -1,5 +1,15 @@
 package me.crafter.mc.lockettepro;
 
+import com.bekvon.bukkit.residence.api.ResidenceApi;
+import com.bekvon.bukkit.residence.api.ResidenceInterface;
+import com.bekvon.bukkit.residence.containers.Flags;
+import com.bekvon.bukkit.residence.protection.ClaimedResidence;
+import com.bekvon.bukkit.residence.protection.FlagPermissions;
+import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.location.Location;
+import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotArea;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
@@ -19,7 +29,8 @@ public class Dependency {
     protected static Plugin vault = null;
     protected static Permission permission = null;
     private static CoreProtectAPI coreProtectAPI;
-
+    protected static boolean res = false;
+    protected static boolean plot = false;
     public Dependency(Plugin plugin) {
         // WorldGuard
         Plugin worldguardplugin = plugin.getServer().getPluginManager().getPlugin("WorldGuard");
@@ -28,6 +39,8 @@ public class Dependency {
         } else {
             worldguard = (WorldGuardPlugin) worldguardplugin;
         }
+        res = plugin.getServer().getPluginManager().getPlugin("Residence") != null;
+        plot = plugin.getServer().getPluginManager().getPlugin("PlotSquared") != null;
         // Vault
         vault = plugin.getServer().getPluginManager().getPlugin("Vault");
         if (vault != null) {
@@ -48,10 +61,23 @@ public class Dependency {
         }
     }
     
-    public static boolean isProtectedFrom(Block block, Block against, ItemStack item, Player player, EquipmentSlot hand){
-        LockSignPlaceEvent event = new LockSignPlaceEvent(block, block.getState(), against, item, player, true, hand);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) return true;
+    public static boolean isProtectedFrom(Block block, Player player) {
+        if (plot) {
+            Location loc = BukkitUtil.getLocation(block.getLocation());
+            PlotArea area = PlotSquared.get().getApplicablePlotArea(loc);
+            Plot plot = area.getPlot(loc);
+            if (plot != null && plot.isAdded(player.getUniqueId())) {
+                return true;
+            }
+        }
+        if (res) {
+            ClaimedResidence res = ResidenceApi.getResidenceManager().getByLoc(block.getLocation());
+            if (res != null) {
+                if (res.getPermissions().playerHas(player, Flags.place, FlagPermissions.FlagCombo.OnlyTrue)) {
+                    return true;
+                }
+            }
+        }
         if (worldguard != null) {
             if (!worldguard.createProtectionQuery().testBlockPlace(player, block.getLocation(), block.getType())) {
                 return true;

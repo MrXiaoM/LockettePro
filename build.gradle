@@ -22,6 +22,8 @@ dependencies {
     compileOnly 'com.comphenix.protocol:ProtocolLib:4.8.0'
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.4'
     compileOnly 'net.coreprotect:coreprotect:21.3'
+    // Residence, PlotSquared v5
+    compileOnly fileTree("libs")
 }
 def targetJavaVersion = 8
 java {

@@ -7,6 +7,7 @@ import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -28,8 +29,9 @@ import java.util.List;
 public class BlockPlayerListener implements Listener {
 
     // Quick protect for chests
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerQuickLockChest(PlayerInteractEvent event){
+        if (event.useInteractedBlock().equals(Event.Result.DENY) || event.useItemInHand().equals(Event.Result.DENY)) return;
         // Check quick lock enabled
         if (Config.getQuickProtectAction() == (byte)0) return;
         // Get player and action info
@@ -51,8 +53,8 @@ public class BlockPlayerListener implements Listener {
                 Block block = event.getClickedBlock();
                 if (block == null) return;
                 // Check permission with external plugin
-                if (Dependency.isProtectedFrom(block.getRelative(event.getBlockFace()), block, event.getItem(), player, event.getHand())) return; // blockwise
-                //if (Dependency.isProtectedFrom(block.getRelative(event.getBlockFace()), player)) return; // signwise
+                if (Dependency.isProtectedFrom(block, player)) return; // blockwise
+                if (Dependency.isProtectedFrom(block.getRelative(event.getBlockFace()), player)) return; // signwise
                 // Check whether locking location is obstructed
                 Block signLoc = block.getRelative(blockface);
                 if (!signLoc.isEmpty()) return;
@@ -136,7 +138,7 @@ public class BlockPlayerListener implements Listener {
         if (LocketteProAPI.isLockString(topline) || LocketteProAPI.isAdditionalString(topline)){
             Block block = LocketteProAPI.getAttachedBlock(event.getBlock());
             if (LocketteProAPI.isLockable(block)){
-                if (Dependency.isProtectedFrom(block, block, player.getItemInHand(), player, EquipmentSlot.HAND)){ // External check here
+                if (Dependency.isProtectedFrom(block, player)){ // External check here
                     event.setLine(0, Config.getLang("sign-error"));
                     Utils.sendMessages(player, Config.getLang("cannot-lock-manual"));
                     return; 

@@ -1,7 +1,7 @@
 name: LockettePro
 main: me.crafter.mc.lockettepro.LockettePro
 author: connection_lost
-softdepend: [Vault, WorldGuard, ProtocolLib, CoreProtect]
+softdepend: [Vault, WorldGuard, ProtocolLib, CoreProtect, Residence, PlotSquared]
 loadbefore: [SignShop]
 version: ${version}
 api-version: 1.13
