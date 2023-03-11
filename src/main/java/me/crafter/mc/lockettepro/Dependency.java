@@ -63,15 +63,17 @@ public class Dependency {
         if (plot) {
             Location loc = BukkitUtil.getLocation(block.getLocation());
             PlotArea area = PlotSquared.get().getApplicablePlotArea(loc);
-            Plot plot = area.getPlot(loc);
-            if (plot != null && plot.isAdded(player.getUniqueId())) {
-                return true;
+            if (area != null) {
+                Plot plot = area.getPlot(loc);
+                if (plot != null && plot.isAdded(player.getUniqueId())) {
+                    return true;
+                }
             }
         }
         if (res) {
             ClaimedResidence res = ResidenceApi.getResidenceManager().getByLoc(block.getLocation());
             if (res != null) {
-                if (res.getPermissions().playerHas(player, Flags.place, FlagPermissions.FlagCombo.OnlyTrue)) {
+                if (!res.getPermissions().playerHas(player, Flags.place, FlagPermissions.FlagCombo.OnlyTrue)) {
                     return true;
                 }
             }
