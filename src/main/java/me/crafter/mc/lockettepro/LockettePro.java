@@ -89,7 +89,7 @@ public class LockettePro extends JavaPlugin {
         return needcheckhand;
     }
 
-    List<String> commandsEdit = Lists.newArrayList("1", "2", "3", "4");
+    List<String> commandsEdit = Lists.newArrayList("1", "2", "3", "4", "remove");
     List<String> commandsDebug = Lists.newArrayList("debug", "force", "update", "uuid");
 
     @Override
@@ -203,12 +203,18 @@ public class LockettePro extends JavaPlugin {
                     case "2":
                     case "3":
                     case "4":
+                    case "remove":
                         if (player.hasPermission("lockettepro.edit")) {
                             String message = "";
                             Block block = Utils.getSelectedSign(player);
                             if (block == null) {
                                 Utils.sendMessages(player, Config.getLang("no-sign-selected"));
-                            } else if (!LocketteProAPI.isSign(block) || !(player.hasPermission("lockettepro.edit.admin") || LocketteProAPI.isOwnerOfSign(block, player))) {
+                            } else if (!LocketteProAPI.isSign(block)) {
+                                Utils.sendMessages(player, Config.getLang("sign-need-reselect"));
+                            } else if (!LocketteProAPI.isProtected(LocketteProAPI.getAttachedBlock(block))) {
+                                block.breakNaturally();
+                                Utils.sendMessages(player, Config.getLang("break-redundant-additional-sign"));
+                            } else if(!player.hasPermission("lockettepro.edit.admin") && !LocketteProAPI.isOwnerOfSign(block, player)) {
                                 Utils.sendMessages(player, Config.getLang("sign-need-reselect"));
                             } else {
                                 for (int i = 1; i < args.length; i++) {
@@ -239,6 +245,11 @@ public class LockettePro extends JavaPlugin {
                                                 Utils.updateUuidByUsername(Utils.getSelectedSign(player), Integer.parseInt(args[0]) - 1);
                                             }
                                             break;
+                                        case "remove":
+                                            block.breakNaturally();
+                                            Utils.sendMessages(player, Config.getLang("break-own-lock-sign"));
+                                            Utils.resetCache(LocketteProAPI.getAttachedBlock(block));
+                                            break;
                                     }
                                 } else if (LocketteProAPI.isAdditionalSign(block)) {
                                     switch (args[0]) {
@@ -255,6 +266,10 @@ public class LockettePro extends JavaPlugin {
                                             if (Config.isUuidEnabled()) {
                                                 Utils.updateUuidByUsername(Utils.getSelectedSign(player), Integer.parseInt(args[0]) - 1);
                                             }
+                                            break;
+                                        case "remove":
+                                            block.breakNaturally();
+                                            Utils.sendMessages(player, Config.getLang("break-own-additional-sign"));
                                             break;
                                     }
                                 } else {
