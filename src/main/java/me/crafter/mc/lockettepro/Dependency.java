@@ -1,7 +1,10 @@
 package me.crafter.mc.lockettepro;
 
+import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.api.ResidenceApi;
 import com.bekvon.bukkit.residence.containers.Flags;
+import com.bekvon.bukkit.residence.containers.lm;
+import com.bekvon.bukkit.residence.permissions.PermissionManager;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -74,7 +77,10 @@ public class Dependency {
         if (res) {
             ClaimedResidence res = ResidenceApi.getResidenceManager().getByLoc(block.getLocation());
             if (res != null) {
-                if (!res.getPermissions().playerHas(player, Flags.place, FlagPermissions.FlagCombo.OnlyTrue)) {
+                FlagPermissions perms = Residence.getInstance().getPermsByLocForPlayer(block.getLocation(), player);
+                boolean hasplace = perms.playerHas(player, Flags.place, perms.playerHas(player, Flags.build, true));
+                if (!hasplace && !PermissionManager.ResPerm.bypass_build.hasPermission(player, 10000L)) {
+                    Residence.msg(player, lm.Flag_Deny, Flags.place);
                     return true;
                 }
             }
